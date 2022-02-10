@@ -106,19 +106,20 @@ function Square(props) {
 
       const moves = history.map((step, move) => {
         const desc = move ? "Go to move #" + move : "Go to game start";
+        let moveDesc = (<></>)
         if (move) {
           const row = Math.floor(step.move / 3);
           const col = step.move % 3;
-          return (
-            <li key={move}>
-              <button onClick={() => this.jumpTo(move)}>{desc}</button>
-              <div>({row}, {col})</div>
-            </li>
-          );
+          moveDesc = (<div>({row}, {col})</div>)
+        }
+        let bold = "";
+        if (this.state.stepNumber == move) {
+          bold = "bold"
         }
         return (
           <li key={move}>
-            <button onClick={() => this.jumpTo(move)}>{desc}</button>
+            <button  class={bold} onClick={() => this.jumpTo(move)}>{desc}</button>
+            {moveDesc}
           </li>
         );
       });
