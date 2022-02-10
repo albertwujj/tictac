@@ -3,24 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 function Square(props) {
+    const highlighted = props.highlighted ? " highlighted" : "";
     return (
-      <button className="square" onClick={props.onClick}> 
+      <button className={"square" + highlighted} onClick={props.onClick}> 
         {props.value}
       </button>
     );
   }
   
   class Board extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        squares: Array(9).fill(null),
-        xIsNext: true,
-      };
-    }
     
     renderSquare(i) {
-      return <Square value={this.props.squares[i]} onClick={() => this.props.onClick(i)}/>;
+      return <
+        Square value={this.props.squares[i]} 
+        highlighted={this.props.winningSquares.includes(i)} 
+        onClick={() => this.props.onClick(i)}
+      />;
     }
   
     render() {
@@ -61,7 +59,7 @@ function Square(props) {
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a];
+        return [squares[a], [a, b, c]];
       }
     }
     return null;
@@ -102,7 +100,7 @@ function Square(props) {
     render() {
       const history = this.state.history;
       const squares = history[this.state.stepNumber].squares;
-      const winner = calculateWinner(squares);
+      const [winner, winningSquares] = calculateWinner(squares) ?? [null, []];
 
       const moves = history.map((step, move) => {
         const desc = move ? "Go to move #" + move : "Go to game start";
@@ -139,7 +137,7 @@ function Square(props) {
       return (
         <div className="game">
           <div className="game-board">
-            <Board squares={squares} onClick={(i) => this.handleClick(i)}/>
+            <Board squares={squares} winningSquares={winningSquares} onClick={(i) => this.handleClick(i)}/>
           </div>
           <div className="game-info">
             <div>{status}</div>
